@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "dist/server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/dist/server.js"
+    },
+    {
+      "src": "/protected/(.*)",
+      "dest": "/dist/server.js"
+    },
+    {
+      "src": "/private/(.*)",
+      "dest": "/dist/server.js"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
