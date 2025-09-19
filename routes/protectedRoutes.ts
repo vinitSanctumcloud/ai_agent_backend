@@ -1,3 +1,4 @@
+// routes/protectedRoutes.js
 import { Router } from 'express';
 import authMiddleware from '../middlewares/authMiddleware';
 import { createAIAgentStepOne, updateAIAgentStepTwo, getUserAIAgent, uploadStepOne, uploadStepTwo, uploadStepThree, updateAIAgentStepThree } from '../controllers/aiAgentController';

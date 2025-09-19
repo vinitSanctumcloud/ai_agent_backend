@@ -1,3 +1,4 @@
+// routes/publicRoutes.js
 import { Router } from 'express';
 import { login, signup } from '../controllers/authController';
 
