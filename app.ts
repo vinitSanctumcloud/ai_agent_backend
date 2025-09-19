@@ -3,7 +3,7 @@ import cors from 'cors'; // Add CORS for cross-origin requests
 import dotenv from 'dotenv';
 import publicRoutes from './routes/publicRoutes';
 import protectedRoutes from './routes/protectedRoutes';
-import privateRoutes from './routes/privateRoutes';
+// import privateRoutes from './routes/privateRoutes';
 import { connectDB } from './config/db';
 
 // Load environment variables
@@ -22,7 +22,7 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', publicRoutes);
 app.use('/protected', protectedRoutes);
-app.use('/private', privateRoutes);
+// app.use('/private', privateRoutes);
 
 
 // 404 Handler

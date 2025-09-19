@@ -1,14 +1,14 @@
-import { Router } from 'express';
-import authMiddleware from '../middlewares/authMiddleware';
-import adminMiddleware from '../middlewares/adminMiddleware';
-import { getAdminDashboard, manageUsers } from '../controllers/adminController';
+// import { Router } from 'express';
+// import authMiddleware from '../middlewares/authMiddleware';
+// import adminMiddleware from '../middlewares/adminMiddleware';
+// import { getAdminDashboard, manageUsers } from '../controllers/adminController';
 
-const router = Router();
+// const router = Router();
 
-router.use(authMiddleware);
-router.use(adminMiddleware);
+// router.use(authMiddleware);
+// router.use(adminMiddleware);
 
-router.get('/dashboard', getAdminDashboard);
-router.post('/manage-users', manageUsers);
+// router.get('/dashboard', getAdminDashboard);
+// router.post('/manage-users', manageUsers);
 
-export default router;
+// export default router;
