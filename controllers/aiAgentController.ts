@@ -181,9 +181,22 @@ export const createAIAgentStepOne = async (req: AuthenticatedRequest, res: Respo
     // Check if user already has an AI agent
     const existingAgent = await aiAgentModel.findOne({ userId: req.user.id });
     if (existingAgent) {
-      return res.status(403).json({
-        success: false,
-        message: 'User is limited to creating only one AI agent',
+      return res.status(200).json({
+        success: true,
+        message: 'AI agent already exists for this user',
+        data: {
+          _id: existingAgent._id,
+          aiAgentName: existingAgent.aiAgentName,
+          aiAgentSlug: existingAgent.aiAgentSlug,
+          agentDescription: existingAgent.agentDescription,
+          domainExpertise: existingAgent.domainExpertise,
+          colorTheme: existingAgent.colorTheme,
+          logoFile: existingAgent.logoFile,
+          bannerFile: existingAgent.bannerFile,
+          userId: existingAgent.userId,
+          createdAt: existingAgent.createdAt,
+          currentStep: existingAgent.currentStep,
+        },
       });
     }
 
