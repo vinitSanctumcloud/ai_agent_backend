@@ -7,6 +7,7 @@ import protectedRoutes from './routes/protectedRoutes';
 // import privateRoutes from './routes/privateRoutes'; // Uncomment if needed
 import { connectDB } from './config/db';
 import { Request, Response, NextFunction } from 'express';
+import path from 'path';
 
 // Load environment variables
 dotenv.config();
@@ -25,6 +26,7 @@ app.use((req, res, next) => {
 
 // Other middleware
 app.use(cors()); // Allow cross-origin requests (adjust as needed)
+app.use('/Uploads', express.static(path.join(__dirname, 'Uploads')));
 app.use(express.json());
 
 // Simple test route for verifying deployment
