@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
-import mongoose from 'mongoose';
+
 import multer from 'multer';
 import path from 'path';
 import { mkdirSync } from 'fs';
 import aiAgentModel from '../models/aiAgentModel';
+import mongoose from 'mongoose';
 
 // Determine the project root directory
 const projectRoot = path.resolve(__dirname, '../..');

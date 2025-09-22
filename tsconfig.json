@@ -1,12 +1,12 @@
 {
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "es2020",           // <-- Change this
-    "rootDir": ".",
-    "outDir": "dist",
-    "strict": true,
+"compilerOptions": {
+    "module": "ESNext",               // or "CommonJS" depending on your target
+    "moduleResolution": "node",      // or "nodenext" if using Node 18+ with ESM
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "target": "ES2020",
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
   },
   "include": ["./**/*.ts"],
   "exclude": ["node_modules", "dist"]

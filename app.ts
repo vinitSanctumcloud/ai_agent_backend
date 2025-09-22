@@ -1,4 +1,4 @@
-// app.ts
+// src/app.ts
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -13,7 +13,7 @@ import { connectDB } from './config/db';
 // Load environment variables from .env file
 dotenv.config();
 
-// Fix __dirname for ES modules in TS
+// Fix __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -23,19 +23,30 @@ const app = express();
 // Connect to MongoDB
 connectDB();
 
-// Middleware for logging requests (optional, for debugging)
+// Middleware for logging requests (optional, useful for debugging)
 app.use((req: Request, res: Response, next: NextFunction) => {
   console.log(`Request: ${req.method} ${req.url}`);
   next();
 });
 
-// Enable CORS (adjust options if needed)
+// Enable CORS
 app.use(cors());
 
-// Serve static files from the 'Uploads' folder at route '/Uploads'
-app.use('/Uploads', express.static(path.join(__dirname, 'Uploads')));
+// ✅ Static Files Middleware
+// Serve static files from 'Uploads' folder at '/Uploads' route
+const uploadsPath = path.join(__dirname, '../Uploads'); // Go one level up from 'src'
+console.log('Serving static files from:', uploadsPath);
 
-// Body parser middleware to parse JSON requests
+app.use(
+  '/Uploads',
+  (req, _res, next) => {
+    console.log('Static file request:', req.url);
+    next();
+  },
+  express.static(uploadsPath)
+);
+
+// Body parser middleware
 app.use(express.json());
 
 // Basic test route
@@ -43,16 +54,22 @@ app.get('/', (_req: Request, res: Response) => {
   res.json({ message: 'Server is running' });
 });
 
-// Use your API routes
+// ✅ Test file serving (manual test route)
+app.get('/test-file', (_req: Request, res: Response) => {
+  const testFilePath = path.join(uploadsPath, 'test.txt');
+  res.sendFile(testFilePath);
+});
+
+// API routes
 app.use('/api/auth', publicRoutes);
 app.use('/protected', protectedRoutes);
 
-// 404 handler for unknown routes
+// 404 handler
 app.use((_req: Request, res: Response) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
-// General error handling middleware
+// Global error handler
 app.use(
   (
     err: any,
@@ -61,7 +78,6 @@ app.use(
     _next: NextFunction
   ) => {
     console.error('Error:', err);
-
     res.status(500).json({
       success: false,
       message: 'Internal server error',
