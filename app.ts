@@ -1,9 +1,7 @@
-// src/app.ts
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
 // Import your routes and DB connection
 import publicRoutes from './routes/publicRoutes';
@@ -13,9 +11,11 @@ import { connectDB } from './config/db';
 // Load environment variables from .env file
 dotenv.config();
 
-// Fix __dirname for ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Since __dirname is available in CommonJS, use it directly.
+// If __dirname is not recognized (rare in TypeScript CommonJS), you can do:
+const uploadsPath = path.resolve(__dirname, '../Uploads'); // Resolve relative to this file
+
+console.log('Serving static files from:', uploadsPath);
 
 // Initialize Express app
 const app = express();
@@ -34,9 +34,6 @@ app.use(cors());
 
 // ✅ Static Files Middleware
 // Serve static files from 'Uploads' folder at '/Uploads' route
-const uploadsPath = path.join(__dirname, '../Uploads'); // Go one level up from 'src'
-console.log('Serving static files from:', uploadsPath);
-
 app.use(
   '/Uploads',
   (req, _res, next) => {
