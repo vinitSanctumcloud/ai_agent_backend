@@ -600,8 +600,8 @@ export const getUserAIAgent = async (req: AuthenticatedRequest, res: Response) =
     );
 
     if (!agent) {
-      return res.status(404).json({
-        success: false,
+      return res.status(200).json({
+        success: true,
         message: 'No AI agent found for this user',
       });
     }
