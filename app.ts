@@ -1,59 +1,73 @@
-// app.js
-import express from 'express';
+// app.ts
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Import your routes and DB connection
 import publicRoutes from './routes/publicRoutes';
 import protectedRoutes from './routes/protectedRoutes';
-// import privateRoutes from './routes/privateRoutes'; // Uncomment if needed
 import { connectDB } from './config/db';
-import { Request, Response, NextFunction } from 'express';
-import path from 'path';
 
-// Load environment variables
+// Load environment variables from .env file
 dotenv.config();
-console.log('JWT_SECRET:', process.env.JWT_SECRET); // Debug log
 
+// Fix __dirname for ES modules in TS
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Initialize Express app
 const app = express();
 
 // Connect to MongoDB
 connectDB();
 
-// Middleware for logging incoming requests (for debugging)
-app.use((req, res, next) => {
+// Middleware for logging requests (optional, for debugging)
+app.use((req: Request, res: Response, next: NextFunction) => {
   console.log(`Request: ${req.method} ${req.url}`);
   next();
 });
 
-// Other middleware
-app.use(cors()); // Allow cross-origin requests (adjust as needed)
+// Enable CORS (adjust options if needed)
+app.use(cors());
+
+// Serve static files from the 'Uploads' folder at route '/Uploads'
 app.use('/Uploads', express.static(path.join(__dirname, 'Uploads')));
+
+// Body parser middleware to parse JSON requests
 app.use(express.json());
 
-// Simple test route for verifying deployment
-app.get('/', (req, res) => {
+// Basic test route
+app.get('/', (_req: Request, res: Response) => {
   res.json({ message: 'Server is running' });
 });
 
-// Routes
+// Use your API routes
 app.use('/api/auth', publicRoutes);
 app.use('/protected', protectedRoutes);
-// app.use('/private', privateRoutes); // Uncomment if needed
 
-// 404 Handler
-app.use((req, res) => {
+// 404 handler for unknown routes
+app.use((_req: Request, res: Response) => {
   res.status(404).json({ message: 'Route not found' });
 });
 
-// Error handling middleware
-app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-  console.error('Error:', err);
+// General error handling middleware
+app.use(
+  (
+    err: any,
+    _req: Request,
+    res: Response,
+    _next: NextFunction
+  ) => {
+    console.error('Error:', err);
 
-  res.status(500).json({
-    success: false,
-    message: 'Internal server error',
-    error: err?.message || 'Unknown error',
-  });
-});
-
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: err?.message || 'Unknown error',
+    });
+  }
+);
 
 export default app;
