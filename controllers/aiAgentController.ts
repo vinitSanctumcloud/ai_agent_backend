@@ -341,20 +341,12 @@ export const updateAIAgentStepTwo = async (req: AuthenticatedRequest, res: Respo
       });
     }
 
-    // Check if AIAgent exists, belongs to the user, and is at step 1
+    // Check if AIAgent exists and belongs to the user
     const existingAgent = await aiAgentModel.findOne({ _id: id, userId: req.user.id });
     if (!existingAgent) {
       return res.status(404).json({
         success: false,
         message: 'AIAgent not found or you do not have permission to modify it',
-      });
-    }
-
-    // Check if the agent is at the correct step
-    if (existingAgent.currentStep !== 1) {
-      return res.status(400).json({
-        success: false,
-        message: `Cannot update step 2: Agent is at step ${existingAgent.currentStep}`,
       });
     }
 
@@ -394,7 +386,7 @@ export const updateAIAgentStepTwo = async (req: AuthenticatedRequest, res: Respo
     if (conversationFlow !== undefined) updateData.conversationFlow = conversationFlow;
     if (configFile !== null) updateData.configFile = configFile;
 
-    // Update AIAgent
+    // Update AIAgent (set currentStep to 2 regardless of previous step)
     const updatedAgent = await aiAgentModel.findOneAndUpdate(
       { _id: id, userId: req.user.id },
       {
@@ -451,7 +443,6 @@ export const updateAIAgentStepTwo = async (req: AuthenticatedRequest, res: Respo
   }
 };
 
-// Step 3: Update AIAgent with data-related fields
 export const updateAIAgentStepThree = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
@@ -473,20 +464,12 @@ export const updateAIAgentStepThree = async (req: AuthenticatedRequest, res: Res
       });
     }
 
-    // Check if AIAgent exists, belongs to the user, and is at step 2
+    // Check if AIAgent exists and belongs to the user
     const existingAgent = await aiAgentModel.findOne({ _id: id, userId: req.user.id });
     if (!existingAgent) {
       return res.status(404).json({
         success: false,
         message: 'AIAgent not found or you do not have permission to modify it',
-      });
-    }
-
-    // Check if the agent is at the correct step
-    if (existingAgent.currentStep !== 2) {
-      return res.status(400).json({
-        success: false,
-        message: `Cannot update step 3: Agent is at step ${existingAgent.currentStep}`,
       });
     }
 
@@ -549,7 +532,7 @@ export const updateAIAgentStepThree = async (req: AuthenticatedRequest, res: Res
     if (csvFile !== null) updateData.csvFile = csvFile;
     if (docFiles.length > 0) updateData.docFiles = docFiles;
 
-    // Update AIAgent
+    // Update AIAgent (set currentStep to 3 regardless of previous step)
     const updatedAgent = await aiAgentModel.findOneAndUpdate(
       { _id: id, userId: req.user.id },
       {
