@@ -7,6 +7,7 @@ import path from 'path';
 import publicRoutes from './routes/publicRoutes';
 import protectedRoutes from './routes/protectedRoutes';
 import { connectDB } from './config/db';
+import authMiddleware from './middlewares/authMiddleware';
 
 // Load environment variables from .env file
 dotenv.config();

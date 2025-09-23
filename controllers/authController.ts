@@ -3,6 +3,19 @@ import User from '../models/userModel';
 import jwt from 'jsonwebtoken';
 import { IUserDocument } from '../models/userModel'; // Import user doc type
 
+// Extend Express Request interface to include 'user'
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        id: string;
+        role: string;
+        [key: string]: any;
+      };
+    }
+  }
+}
+
 // Ensure JWT_SECRET is defined
 const JWT_SECRET = process.env.JWT_SECRET || '8f9a6b3c2d5e4f7a8b9c0d1e2f3a4b5c';
 if (!JWT_SECRET) {
@@ -92,4 +105,16 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
       error: process.env.NODE_ENV === 'production' ? undefined : errorMessage,
     });
   }
+};
+
+export const checkAuth = (req: Request, res: Response) => {
+  if (!req.user) {
+    return res.status(401).json({ success: false, message: 'User not authenticated' });
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: 'User is authenticated',
+    user: req.user, // { id, role }
+  });
 };
