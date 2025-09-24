@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import User from '../models/userModel';
 import jwt from 'jsonwebtoken';
 import { IUserDocument } from '../models/userModel'; // Import user doc type
+import aiAgentModel from '../models/aiAgentModel';
 
 // Extend Express Request interface to include 'user'
 declare global {
@@ -15,7 +16,13 @@ declare global {
     }
   }
 }
-
+interface AuthenticatedRequest extends Request {
+  user?: {
+    id: string;
+    role: string;
+  };
+  files?: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[];
+}
 // Ensure JWT_SECRET is defined
 const JWT_SECRET = process.env.JWT_SECRET || '8f9a6b3c2d5e4f7a8b9c0d1e2f3a4b5c';
 if (!JWT_SECRET) {
@@ -117,4 +124,43 @@ export const checkAuth = (req: Request, res: Response) => {
     message: 'User is authenticated',
     user: req.user, // { id, role }
   });
+};
+
+// Get AI agent by slug (public access)
+export const getUserAIAgent = async (req: Request, res: Response) => {
+  try {
+    const { aiAgentSlug } = req.params;
+
+    if (!aiAgentSlug) {
+      return res.status(400).json({
+        success: false,
+        message: 'AI agent slug is required in the URL path',
+      });
+    }
+
+    const agent = await aiAgentModel.findOne({ aiAgentSlug }).select(
+      '_id aiAgentName aiAgentSlug agentDescription domainExpertise colorTheme logoFile bannerFile createdAt currentStep greeting tone customRules conversationStarters languages enableFreeText enableBranchingLogic conversationFlow configFile manualEntry csvFile docFiles'
+    );
+
+    if (!agent) {
+      return res.status(404).json({
+        success: false,
+        message: 'AI agent not found for the provided slug',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'AI agent retrieved successfully',
+      data: agent,
+    });
+  } catch (error: unknown) {
+    console.error('Error in getUserAIAgent:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: errorMessage,
+    });
+  }
 };
