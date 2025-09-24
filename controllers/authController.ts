@@ -143,8 +143,8 @@ export const getUserAIAgent = async (req: Request, res: Response) => {
     );
 
     if (!agent) {
-      return res.status(404).json({
-        success: false,
+      return res.status(200).json({
+        success: true,
         message: 'AI agent not found for the provided slug',
       });
     }
